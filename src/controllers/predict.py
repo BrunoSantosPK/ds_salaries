@@ -1,5 +1,5 @@
 import json
-import pickle
+import joblib
 from flask import request
 
 
@@ -10,9 +10,13 @@ class ControllerPredict:
         result = {"success": True, "message": ""}
 
         try:
-            # Carrega modelos e dados para input da previsão
-            with open(f"{base_path}/data/model", "wb") as file:
-                model = pickle.load(file)
+            body = json.loads(request.data)
+            with open(f"{base_path}/data/model.joblib", "rb") as file:
+                model = joblib.load(file)
+
+            model_result = model.transform_predict([body])[0]
+            print(model_result)
+            result["salary"] = model.transform_predict([body])[0]
 
         except BaseException as e:
             result["success"] = False

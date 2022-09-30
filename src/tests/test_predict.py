@@ -13,18 +13,20 @@ def client():
 
 def test_predict(client):
     base_path = dirname(dirname(dirname(abspath(__file__))))
-    df = pd.read_csv(f"{base_path}/data/data_test.csv")
+    df = pd.read_csv(f"{base_path}/data/test.csv")
+    #remote_ratio,experience_level,employment_type,company_size,job_title,predict
     equals = []
     
     for i in range(0, len(df)):
         data = {
-            "volatile_acidity": df["volatile_acidity"].values[i],
-            "citric_acid": df["citric_acid"].values[i],
-            "free_sulfur_dioxide": df["free_sulfur_dioxide"].values[i],
-            "alcohol": df["alcohol"].values[i]
+            "remote_ratio": int(df["remote_ratio"].values[i]),
+            "experience_level": df["experience_level"].values[i],
+            "employment_type": df["employment_type"].values[i],
+            "company_size": df["company_size"].values[i],
+            "job_title": df["job_title"].values[i]
         }
         response = client.post("/predict", json=data)
-        predict = json.loads(response.get_data(as_text=True))["quality"]
-        equals.append(predict == df["predict"].values[i])
+        predict = json.loads(response.get_data(as_text=True))["salary"]
+        equals.append(round(predict) == round(df["predict"].values[i]))
     
     assert False not in equals
