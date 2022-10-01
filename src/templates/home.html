@@ -4,7 +4,6 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="/static/style.css" rel="stylesheet">
         <title>Data Science Salaries</title>
 
         <!-- Bootstrap -->
@@ -12,8 +11,121 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
     </head>
 
-    <body></body>
+    <body>
 
-    <script></script>
+        <div class="container">
+
+            <div class="row">
+                <div class="col-12">
+                    <h1>Gostaria de fazer uma simulação do salário base de um profissional de dados?</h1>
+                </div>
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-12">
+                    <label>Qual a modalidade de trabalho?</label>
+                    <select class="form-control" id="remote_ratio">
+                        <option value="0">Presencial</option>
+                        <option value="50">Híbrido</option>
+                        <option value="100">Remoto</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-12">
+                    <label>Qual a senioridade?</label>
+                    <select class="form-control" id="experience_level">
+                        <option value="1">Júnior</option>
+                        <option value="2">Pleno</option>
+                        <option value="3">Sênior</option>
+                        <option value="4">Especialista</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-12">
+                    <label>Qual o modelo de contratação?</label>
+                    <select class="form-control" id="employment_type">
+                        <option value="1">Freelancer</option>
+                        <option value="2">Meio período</option>
+                        <option value="3">Contrato</option>
+                        <option value="4">Full-time</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-12">
+                    <label>Qual o tamanho da empresa?</label>
+                    <select class="form-control" id="company_size">
+                        <option value="1">Pequena</option>
+                        <option value="2">Média</option>
+                        <option value="3">Grande</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-12">
+                    <label>Qual a função almejada?</label>
+                    <select class="form-control" id="job_title">
+                        <option value="Data Scientist">Data Scientist</option>
+                        <option value="Data Engineer">Data Engineer</option>
+                        <option value="Data Analyst">Data Analyst</option>
+                        <option value="Research Scientist">Research Scientist</option>
+                        <option value="Data Lead">Data Lead</option>
+                        <option value="Data Manager">Data Manager</option>
+                        <option value="Data Architect">Data Architect</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-12">
+                    <button class="btn btn-primary" onclick="submit()" id="submit">Calcular</button>
+                </div>
+            </div>
+
+        </div>
+
+    </body>
+
+    <script>
+
+        async function submit() {
+            const button = document.getElementById("submit");
+            const data = {
+                "remote_ratio": parseInt(document.getElementById("remote_ratio").value),
+                "experience_level": document.getElementById("experience_level").value,
+                "employment_type": document.getElementById("employment_type").value,
+                "company_size": document.getElementById("company_size").value,
+                "job_title": document.getElementById("job_title").value
+            };
+
+            try {
+                button.textContent = "Aguarde...";
+                button.disabled = true;
+                const req = await fetch("/predict", {
+                    method: "POST",
+                    body: JSON.stringify(data)
+                });
+                const res = await req.json();
+                if(!res.success)
+                    throw new Error(res.message);
+
+                alert(`O salário previsto é de R$ ${res.salary.toFixed(2).replace(".", ",")}!`);
+
+            } catch(error) {
+                alert(`Desculpe, ocorreu um erro: ${error.message}`);
+
+            } finally {
+                button.textContent = "Calcular";
+                button.disabled = false;
+            }
+        }
+
+    </script>
 
 </html>

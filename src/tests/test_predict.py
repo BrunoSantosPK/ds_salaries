@@ -14,7 +14,6 @@ def client():
 def test_predict(client):
     base_path = dirname(dirname(dirname(abspath(__file__))))
     df = pd.read_csv(f"{base_path}/data/test.csv")
-    #remote_ratio,experience_level,employment_type,company_size,job_title,predict
     equals = []
     
     for i in range(0, len(df)):
